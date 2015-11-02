@@ -1,39 +1,67 @@
 (function(module) {
-	"use strict";
+  "use strict";
 
-	var TopicBadges = {};
+  var TopicBadges = {};
 
-	var SocketAdmin = module.parent.require('./socket.io/admin'),
-		Sockets = module.parent.require('./socket.io/index'),
-		Topics = module.parent.require('./topics.js');
+  var topics = module.parent.require('./topics.js'),
+    privileges = module.parent.require('./privileges'),
+    PluginSocket = module.parent.require('./socket.io/plugins');
 
-	TopicBadges.init = function(params, callback) {
-		SocketAdmin.topics = SocketAdmin.topics || {};
-		SocketAdmin.topics.renameTopic = function(socket, data, callback) {
-			if (!data.tid || !data.title) {
-				return callback(false);
-			}
+  TopicBadges.init = function(params, callback) {
+    PluginSocket.topicbadges = {
+      set: function(socket, data, cb) {
+        if (!data.text) {
+          return cb('ERRNOTEXT');
+        }
+        if (!data.tid) {
+          return cb('ERRNOTID');
+        }
+        privileges.topics.canEdit(data.tid, socket.uid, function(err, canEdit) {
+          if (!canEdit || err) {
+            return cb(new Error('[[error:no-privileges]]'));
+          }
 
-			Topics.setTopicField(data.tid, 'title', data.title, callback);
-		};
+          TopicBadges.setBadge(data.tid, data.text, cb);
+        });
+      },
+      rm: function(socket, data, cb) {
+        if (!data.tid) {
+          return cb('ERRNOTID');
+        }
+        privileges.topics.canEdit(data.tid, socket.uid, function(err, canEdit) {
+          if (!canEdit || err) {
+            return cb(new Error('[[error:no-privileges]]'));
+          }
 
-		callback();
-	};
+          TopicBadges.setBadge(data.tid, cb);
+        });
+      }
+    };
+    callback();
+  };
 
-	TopicBadges.addScripts = function(scripts, callback) {
-		scripts.push('plugins/nodebb-plugin-topic-badges/lib/main.js');
-		callback(null, scripts);
-	};
+  TopicBadges.setBadge = function(tid, text, cb) {
+    if (typeof text === 'function') {
+      cb = text;
+      text = '';
+    }
+    topics.setTopicField(tid, 'badge', text, cb);
+  };
 
-	TopicBadges.addThreadTools = function(data, callback) {
-		data.tools.push({
-			"title": "Mark <strong>Solved</strong>",
-			"class": "mark-solved",
-			"icon": "fa-check"
-		});
+  TopicBadges.addScripts = function(scripts, callback) {
+    scripts.push('plugins/nodebb-plugin-topic-badges/lib/main.js');
+    callback(null, scripts);
+  };
 
-		callback(null, data);
-	};
+  TopicBadges.addThreadTools = function(data, callback) {
+    data.tools.push({
+      "title": "Mark <strong>Solved</strong>",
+      "class": "mark-solved",
+      "icon": "fa-check"
+    });
 
-	module.exports = TopicBadges;
+    callback(null, data);
+  };
+
+  module.exports = TopicBadges;
 }(module));
