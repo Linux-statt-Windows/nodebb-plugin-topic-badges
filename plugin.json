@@ -15,7 +15,7 @@
 			"hook": "static:app.load", "method": "init"
 		},
 		{
-			"hook": "filter:topics.get", "method": "addBadgeData"
+			"hook": "filter:topics.get", "method": "addBadgesToTopics"
 		}
 	],
 	"staticDirs": {

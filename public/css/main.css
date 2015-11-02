@@ -1,4 +1,31 @@
-.badge.topic-badge {
+.badge.topic-badge, .badge.topic-badge-button {
 	background: #36393D;
 	padding: 6px;
+}
+
+li[component="breadcrumb/current"] .topic-badge {
+	display: none !important;
+}
+
+span[component="topic/title"] .topic-badge {
+	margin-left: 14px;
+}
+
+span[component="topic/title"] .topic-badge-add {
+	cursor: pointer;
+	opacity: 0.3;
+}
+
+span[component="topic/title"] .topic-badge-edit {
+	cursor: pointer;
+}
+
+span[component="topic/title"] .topic-badge-del {
+	z-index: 7000;
+	padding-left: 5px;
+	cursor: pointer;
+}
+
+span[component="topic/title"] .topic-badge-del:hover {
+	color: rgb(241, 145, 33);
 }

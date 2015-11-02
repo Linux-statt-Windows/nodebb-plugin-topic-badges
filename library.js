@@ -9,7 +9,7 @@
 		PluginSocket = module.parent.require('./socket.io/plugins');
 
 	TopicBadges.init = function(params, callback) {
-		PluginSocket.topicbadges = {
+		PluginSocket.TopicBadges = {
 			set: function(socket, data, cb) {
 				if (!data.text) {
 					return cb('ERRNOTEXT');
@@ -54,10 +54,10 @@
 		callback(null, scripts);
 	};
 
-	TopicBadges.addBadgeData = function(data, callback) {
+	TopicBadges.addBadgesToTopics = function(data, callback) {
 		async.map(data.topics, function(topic, next) {
-			if (void 0 != topic.badge && topic.badge !== '') {
-				topic.title = '<span class="badge pull-right">' + topic.badge +
+			if (void 0 !== topic.badge && topic.badge !== '') {
+				topic.title = '<span class="badge topic-badge pull-right">' + topic.badge +
 											'</span> ' + topic.title;
 			}
 			return next(null, topic);
