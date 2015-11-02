@@ -1,5 +1,6 @@
-(function() {
-"use strict";
+$('document').ready(function() {
+	"use strict";
+	/*global socket app ajaxify*/
 
 	function badgifyTitle(title, badge) {
 		if (title.match(/^\[.+\]/)) {
@@ -11,26 +12,33 @@
 		return title;
 	}
 
-	jQuery('document').ready(function() {
-		$(window).on('action:ajaxify.end', function(ev, data) {
+	function addSolvedTool() {
+		$('.thread-tools .mark-solved').on('click', function(ev) {
+			socket.emit('plugins.topicbadges.set', {
+				text: 'Solved',
+				tid: ajaxify.data['tid']
+			}, function(err) {
+				if (err) {
+					app.alertError('Unable to mark <b>' + ajaxify.data['title'] +
+												 '</b> as <i>solved</i>.');
+					console.warn('[plugin/topic-badges] Setting \'solved\' badge ' +
+											 'failed.');
+					return console.error(err);
+				}
+				app.alertSuccess('<b>' + ajaxify.data['title'] +
+												 '</b> is marked as <i>solved</i> now.');
+				ajaxify.refresh();
+			});
 
-			if (data.url.match(/^topic/)) {
-				$('.thread-tools .mark-solved').on('click', function(ev) {
-					var title = badgifyTitle(ajaxify.variables.get('topic_name'), 'Solved');
-					socket.emit('admin.topics.renameTopic', {
-						tid: ajaxify.variables.get('topic_id'),
-						title: title
-					}, function(err) {
-						if (!err) {
-							$('.topic-title').html(title);
-						}
-					});
-
-					ev.preventDefault();
-					return false;
-				});
-			}
+			ev.preventDefault();
+			return false;
 		});
+	}
 
+	$(window).on('action:ajaxify.end', function(ev, data) {
+
+		if (data.url.match(/^topic\//)) {
+			addSolvedTool();
+		}
 	});
-}());
+});
