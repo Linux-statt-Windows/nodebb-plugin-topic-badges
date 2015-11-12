@@ -37,13 +37,13 @@ $('document').ready(function() {
 					buttonClass = 'topic-badge-edit';
 					deleteButton = '<i class="fa fa-times topic-badge-del"></i>';
 				}
-				titleComponent.prepend('<span class="badge topic-badge ' +
-																buttonClass + ' pull-right">' +
-																badgeText + deleteButton + '</span>');
+				titleComponent.after('<div class="badge topic-badge ' +
+																buttonClass + '">' +
+																badgeText + deleteButton + '</div>');
 				addBadgeHandler(titleComponent);
 			} else {
 				if (canEdit()) {
-					titleComponent.prepend('<span class="badge topic-badge topic-badge-add pull-right">Add Badge</span>');
+					titleComponent.after('<div class="badge topic-badge topic-badge-add">Add Badge</div>');
 					addBadgeHandler(titleComponent);
 				}
 			}
@@ -73,7 +73,7 @@ $('document').ready(function() {
 	}
 
 	function addBadgeHandler(titleComponent) {
-		var badgeButton = titleComponent.children('.topic-badge');
+		var badgeButton = titleComponent.siblings('.topic-badge');
 		var deleteButton = badgeButton.children('.topic-badge-del');
 		if (badgeButton.length > 0 && canEdit()) {
 			badgeButton.on('click', badgeDialog);
