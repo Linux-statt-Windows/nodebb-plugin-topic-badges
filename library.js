@@ -1,3 +1,5 @@
+var S = require('string');
+
 (function(module) {
 	"use strict";
 
@@ -47,8 +49,7 @@
 			callback = text;
 			text = '';
 		}
-		// escape text to prevent XSS
-		text = validator.escape(text);
+		text = S(text).stripTags().trim();
 		topics.setTopicField(tid, 'badge', text, callback);
 	};
 
