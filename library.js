@@ -1,3 +1,5 @@
+var S = require('string');
+
 (function(module) {
 	"use strict";
 
@@ -46,6 +48,7 @@
 			callback = text;
 			text = '';
 		}
+		text = S(text).stripTags().trim();
 		topics.setTopicField(tid, 'badge', text, callback);
 	};
 
