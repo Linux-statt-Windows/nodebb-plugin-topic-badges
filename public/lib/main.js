@@ -105,13 +105,13 @@ $('document').ready(function() {
 					socket.emit('plugins.TopicBadges.set', {
 							text: result,
 							tid: ajaxify.data.tid
-						}, function(err) {
+						}, function(err, badge) {
 							if (err) {
 								app.alertError('Couldn\'t change badge.');
 								console.warn('[plugin/topic-badges] Setting badge failed.');
 								return console.error(err);
 							}
-							app.alertSuccess('Badge has been changed to <b>' + result + '</b>.');
+							app.alertSuccess('Badge has been changed to <b>' + badge + '</b>.');
 							ajaxify.refresh();
 						});
 				}

@@ -49,8 +49,13 @@ var S = require('string');
 			callback = text;
 			text = '';
 		}
-		text = S(text).stripTags().trim();
-		topics.setTopicField(tid, 'badge', text, callback);
+		text = S(text).stripTags().trim().s;
+		topics.setTopicField(tid, 'badge', text, function(err) {
+			if (err) {
+				callback(err);
+			}
+			callback(null, text);
+		});
 	};
 
 	TopicBadges.addScripts = function(scripts, callback) {
